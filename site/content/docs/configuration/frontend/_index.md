@@ -85,6 +85,31 @@ Remark42 has two themes: light and dark. You can pick one using a configuration 
 window.REMARK42.changeTheme("light")
 ```
 
+#### Matching your site's font
+
+To match the widget's font to your site's, set `remark_config.custom_properties['--font-family']`
+to the font your site uses. You don't need to modify or rebuild Remark42 itself to do this:
+
+```js
+var remark_config = {
+	host: "REMARK_URL",
+	site_id: "YOUR_SITE_ID",
+	custom_properties: {
+		"--font-family": "Georgia, serif",
+	},
+}
+```
+
+The widget reads this once, when it loads. Changing it after the widget is already showing has no
+effect until the page is reloaded.
+
+**Note:** `custom_properties` technically accepts any CSS custom property the widget's stylesheets
+define (see `custom-properties.css`).
+
+**Note:** `__colors__` is an older name for the same option. It still works, kept as an alias, but
+use `custom_properties` for anything new.
+
+
 #### Locales
 
 Right now Remark42 is translated to English (en), Russian (ru), German (de), Finnish (fi), Spanish (es), Chinese (zh), Turkish (tr), Bulgarian (bg), Ukrainian (ua), Polish (pl), Vietnamese (vi), Belarusian (be), French (fr), Japanese (ja), Korean (ko), Brazilian Portuguese (bp), Italian (it), Arabic (ar), Traditional Chinese (zh-tw), Thai (th), Czech (cs), Persian (fa), Macedonian (mk), Romanian (ro), Swedish (sv) and Hebrew (he). You can pick one using a [configuration object](https://remark42.com/docs/getting-started/installation/#setup-on-your-website).

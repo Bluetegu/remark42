@@ -37,6 +37,28 @@ func TestConfig_ColorsReachTheWidget(t *testing.T) {
 	assert.Equal(t, "rgb(1, 2, 3)", value, "the colors an integrator sets never reached the widget document")
 }
 
+// TestConfig_CustomPropertiesReachTheWidget covers custom_properties, the plainly-named
+// replacement for __colors__: the field was never actually colors-only (the mechanism above
+// applies any "--"-prefixed key, whatever it is), and custom_properties is what an integrator
+// should now set to match the widget's font to their own page. custom_properties travels the
+// same window.name path as __colors__ - create-iframe.ts merges the two before writing it - so
+// this is also the only test exercising that merge from a real remark_config, not just the
+// iframe's own wire format.
+func TestConfig_CustomPropertiesReachTheWidget(t *testing.T) {
+	t.Parallel()
+
+	page := newPage(t)
+	stubSignedOut(t, page)
+	embedConfig(t, page, map[string]any{"custom_properties": map[string]any{"--font-family": "Georgia"}})
+	widget(t, page)
+
+	value, err := page.FrameLocator("#remark42 iframe").Locator(":root").Evaluate(
+		`(el) => getComputedStyle(el).getPropertyValue('--font-family').trim()`, nil,
+		playwright.LocatorEvaluateOptions{Timeout: playwright.Float(float64(waitTimeout.Milliseconds()))})
+	require.NoError(t, err)
+	assert.Equal(t, "Georgia", value, "custom_properties never reached the widget document")
+}
+
 // TestConfig_URLOverrideDecidesTheThread covers remark_config.url, which is how a canonical
 // address keeps one conversation across pages that differ: a print view, a path with tracking
 // parameters, a page that moved. Two host pages at different addresses name the same thread here,
