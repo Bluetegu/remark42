@@ -41,9 +41,8 @@ func TestConfig_ColorsReachTheWidget(t *testing.T) {
 // replacement for __colors__: the field was never actually colors-only (the mechanism above
 // applies any "--"-prefixed key, whatever it is), and custom_properties is what an integrator
 // should now set to match the widget's font to their own page. custom_properties travels the
-// same window.name path as __colors__ - create-iframe.ts merges the two before writing it - so
-// this is also the only test exercising that merge from a real remark_config, not just the
-// iframe's own wire format.
+// same window.name path as __colors__. The merge behavior is covered in create-iframe.test.ts;
+// this test verifies that custom_properties from a real remark_config reaches the widget document.
 func TestConfig_CustomPropertiesReachTheWidget(t *testing.T) {
 	t.Parallel()
 
