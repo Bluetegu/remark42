@@ -104,7 +104,11 @@ The widget reads this once, when it loads. Changing it after the widget is alrea
 effect until the page is reloaded.
 
 **Note:** `custom_properties` technically accepts any CSS custom property the widget's stylesheets
-define (see `custom-properties.css`).
+define (see `custom-properties.css`), not only `--font-family`. Only `--font-family` is supported,
+though — `--font-size`, for example, isn't wired to anything: most components hardcode their own
+font-size instead of reading a variable, so setting it has no visible effect. Even a property that
+does work today isn't guaranteed to keep working, or keep meaning the same thing, in a future
+version. Treat anything beyond `--font-family` as unsupported and best-effort, not a documented API.
 
 **Note:** `__colors__` is an older name for the same option. It still works, kept as an alias, but
 use `custom_properties` for anything new.

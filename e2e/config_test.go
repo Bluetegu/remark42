@@ -42,16 +42,22 @@ func TestConfig_ColorsReachTheWidget(t *testing.T) {
 // applies any "--"-prefixed key, whatever it is), and custom_properties is what an integrator
 // should now set to match the widget's font to their own page. custom_properties travels the
 // same window.name path as __colors__. The merge behavior is covered in create-iframe.test.ts;
-// this test verifies that custom_properties from a real remark_config reaches the widget document.
+// this test verifies both that custom_properties from a real remark_config reaches the widget
+// document and that the widget actually renders with it, not only that the variable is set.
 func TestConfig_CustomPropertiesReachTheWidget(t *testing.T) {
 	t.Parallel()
 
 	page := newPage(t)
 	stubSignedOut(t, page)
 	embedConfig(t, page, map[string]any{"custom_properties": map[string]any{"--font-family": "Georgia"}})
-	widget(t, page)
+	frame := widget(t, page)
 
-	value, err := page.FrameLocator("#remark42 iframe").Locator(":root").Evaluate(
+	rendered, err := frame.Locator("body").Evaluate(`(el) => getComputedStyle(el).fontFamily`, nil,
+		playwright.LocatorEvaluateOptions{Timeout: playwright.Float(float64(waitTimeout.Milliseconds()))})
+	require.NoError(t, err)
+	assert.Contains(t, rendered, "Georgia", "custom_properties reached the variable but body isn't actually rendering it")
+
+	value, err := frame.Locator(":root").Evaluate(
 		`(el) => getComputedStyle(el).getPropertyValue('--font-family').trim()`, nil,
 		playwright.LocatorEvaluateOptions{Timeout: playwright.Float(float64(waitTimeout.Milliseconds()))})
 	require.NoError(t, err)
